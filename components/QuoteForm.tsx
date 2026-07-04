@@ -4,20 +4,31 @@ import { FormEvent, useState } from "react";
 import Link from "next/link";
 import { ACCEPTED_FILE_EXTENSIONS } from "@/lib/validation";
 
+const MAX_UPLOAD_SIZE_MB = 25;
+const MAX_UPLOAD_SIZE_BYTES = MAX_UPLOAD_SIZE_MB * 1024 * 1024;
+
 const inputClass =
   "focus-ring mt-2 w-full rounded-xl border border-slate-300 bg-white px-4 py-3 text-base text-slate-950 shadow-sm transition placeholder:text-slate-400 focus:border-blue-600";
 
 const labelClass = "text-sm font-semibold text-slate-900";
 
+type QuoteApiResponse = {
+  success: boolean;
+  id?: string;
+  error?: string;
+  errors?: Record<string, string>;
+};
+
 function ErrorMessage({ message }: { message?: string }) {
   if (!message) return null;
+
   return <p className="mt-2 text-sm font-medium text-red-700">{message}</p>;
 }
 
 function FormSection({
   title,
   description,
-  children
+  children,
 }: {
   title: string;
   description?: string;
@@ -27,8 +38,11 @@ function FormSection({
     <div className="rounded-2xl border border-slate-200 bg-white p-5 sm:p-6">
       <div className="mb-5">
         <h3 className="text-lg font-bold text-slate-950">{title}</h3>
+
         {description ? (
-          <p className="mt-2 text-sm leading-6 text-slate-600">{description}</p>
+          <p className="mt-2 text-sm leading-6 text-slate-600">
+            {description}
+          </p>
         ) : null}
       </div>
 
@@ -43,32 +57,65 @@ export default function QuoteForm() {
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
+
     setErrors({});
     setIsSubmitting(true);
 
     const form = event.currentTarget;
     const formData = new FormData(form);
+    const inventoryFile = formData.get("inventoryFile");
+
+    if (!(inventoryFile instanceof File) || inventoryFile.size === 0) {
+      setErrors({
+        inventoryFile: "Please upload your inventory file.",
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (inventoryFile.size > MAX_UPLOAD_SIZE_BYTES) {
+      setErrors({
+        inventoryFile: `File is too large. Please upload a file under ${MAX_UPLOAD_SIZE_MB}MB.`,
+      });
+      setIsSubmitting(false);
+      return;
+    }
 
     try {
       const response = await fetch("/api/quote", {
         method: "POST",
-        body: formData
+        body: formData,
       });
 
-      const result = (await response.json()) as {
-        ok: boolean;
-        errors?: Record<string, string>;
-      };
+      let result: QuoteApiResponse;
 
-      if (!response.ok || !result.ok) {
-        setErrors(result.errors ?? { form: "Please check the form and try again." });
+      try {
+        result = (await response.json()) as QuoteApiResponse;
+      } catch {
+        result = {
+          success: false,
+          error: "The server returned an invalid response.",
+        };
+      }
+
+      if (!response.ok || !result.success) {
+        setErrors(
+          result.errors ?? {
+            form: result.error || "Please check the form and try again.",
+          }
+        );
+
         setIsSubmitting(false);
         return;
       }
 
+      form.reset();
       window.location.assign("/thank-you");
     } catch {
-      setErrors({ form: "Something went wrong. Please try again." });
+      setErrors({
+        form: "Something went wrong. Please try again.",
+      });
+
       setIsSubmitting(false);
     }
   }
@@ -97,7 +144,10 @@ export default function QuoteForm() {
             </div>
 
             <div className="rounded-2xl border border-slate-200 bg-white p-5 text-sm leading-6 text-slate-700">
-              <p className="font-semibold text-slate-950">Useful files to upload:</p>
+              <p className="font-semibold text-slate-950">
+                Useful files to upload:
+              </p>
+
               <ul className="mt-3 list-inside list-disc space-y-1">
                 <li>Amazon removal inventory report</li>
                 <li>Unfulfillable inventory report</li>
@@ -127,6 +177,7 @@ export default function QuoteForm() {
               <label className={labelClass} htmlFor="name">
                 Name <span className="text-red-700">*</span>
               </label>
+
               <input
                 className={inputClass}
                 id="name"
@@ -135,6 +186,7 @@ export default function QuoteForm() {
                 autoComplete="name"
                 required
               />
+
               <ErrorMessage message={errors.name} />
             </div>
 
@@ -142,6 +194,7 @@ export default function QuoteForm() {
               <label className={labelClass} htmlFor="email">
                 Email <span className="text-red-700">*</span>
               </label>
+
               <input
                 className={inputClass}
                 id="email"
@@ -150,13 +203,16 @@ export default function QuoteForm() {
                 autoComplete="email"
                 required
               />
+
               <ErrorMessage message={errors.email} />
             </div>
 
             <div>
               <label className={labelClass} htmlFor="companySellerName">
-                Amazon store / brand name <span className="text-red-700">*</span>
+                Amazon store / brand name{" "}
+                <span className="text-red-700">*</span>
               </label>
+
               <input
                 className={inputClass}
                 id="companySellerName"
@@ -165,6 +221,7 @@ export default function QuoteForm() {
                 placeholder="Example: store name, brand, or seller name"
                 required
               />
+
               <ErrorMessage message={errors.companySellerName} />
             </div>
 
@@ -172,6 +229,7 @@ export default function QuoteForm() {
               <label className={labelClass} htmlFor="country">
                 Country <span className="text-red-700">*</span>
               </label>
+
               <input
                 className={inputClass}
                 id="country"
@@ -180,13 +238,16 @@ export default function QuoteForm() {
                 defaultValue="United Kingdom"
                 required
               />
+
               <ErrorMessage message={errors.country} />
             </div>
 
             <div>
               <label className={labelClass} htmlFor="preferredContactMethod">
-                Preferred contact method <span className="text-red-700">*</span>
+                Preferred contact method{" "}
+                <span className="text-red-700">*</span>
               </label>
+
               <select
                 className={inputClass}
                 id="preferredContactMethod"
@@ -198,6 +259,7 @@ export default function QuoteForm() {
                 <option>WhatsApp</option>
                 <option>WeChat</option>
               </select>
+
               <ErrorMessage message={errors.preferredContactMethod} />
             </div>
 
@@ -206,6 +268,7 @@ export default function QuoteForm() {
                 WhatsApp number{" "}
                 <span className="font-normal text-slate-500">optional</span>
               </label>
+
               <input
                 className={inputClass}
                 id="whatsappNumber"
@@ -213,19 +276,23 @@ export default function QuoteForm() {
                 type="tel"
                 autoComplete="tel"
               />
+
               <ErrorMessage message={errors.whatsappNumber} />
             </div>
 
             <div>
               <label className={labelClass} htmlFor="wechatId">
-                WeChat ID <span className="font-normal text-slate-500">optional</span>
+                WeChat ID{" "}
+                <span className="font-normal text-slate-500">optional</span>
               </label>
+
               <input
                 className={inputClass}
                 id="wechatId"
                 name="wechatId"
                 type="text"
               />
+
               <ErrorMessage message={errors.wechatId} />
             </div>
           </FormSection>
@@ -236,8 +303,10 @@ export default function QuoteForm() {
           >
             <div>
               <label className={labelClass} htmlFor="approximateUnits">
-                Approximate number of units <span className="text-red-700">*</span>
+                Approximate number of units{" "}
+                <span className="text-red-700">*</span>
               </label>
+
               <input
                 className={inputClass}
                 id="approximateUnits"
@@ -247,6 +316,7 @@ export default function QuoteForm() {
                 placeholder="Example: 500"
                 required
               />
+
               <ErrorMessage message={errors.approximateUnits} />
             </div>
 
@@ -255,6 +325,7 @@ export default function QuoteForm() {
                 Approximate pallet count{" "}
                 <span className="font-normal text-slate-500">optional</span>
               </label>
+
               <input
                 className={inputClass}
                 id="approximatePalletCount"
@@ -263,13 +334,16 @@ export default function QuoteForm() {
                 inputMode="decimal"
                 placeholder="Example: 2 pallets, unknown, or loose cartons"
               />
+
               <ErrorMessage message={errors.approximatePalletCount} />
             </div>
 
             <div className="sm:col-span-2">
               <label className={labelClass} htmlFor="mainProductCategory">
-                Main product category <span className="text-red-700">*</span>
+                Main product category{" "}
+                <span className="text-red-700">*</span>
               </label>
+
               <input
                 className={inputClass}
                 id="mainProductCategory"
@@ -278,6 +352,7 @@ export default function QuoteForm() {
                 placeholder="Example: home, toys, electronics accessories, beauty, pet, DIY"
                 required
               />
+
               <ErrorMessage message={errors.mainProductCategory} />
             </div>
 
@@ -286,12 +361,14 @@ export default function QuoteForm() {
                 Inventory condition notes{" "}
                 <span className="font-normal text-slate-500">optional</span>
               </label>
+
               <textarea
                 className={`${inputClass} min-h-28`}
                 id="inventoryConditionNotes"
                 name="inventoryConditionNotes"
                 placeholder="Example: customer returns, open-box, damaged packaging, new boxed, mixed-condition, removal inventory, unfulfillable stock"
               />
+
               <ErrorMessage message={errors.inventoryConditionNotes} />
             </div>
           </FormSection>
@@ -302,8 +379,10 @@ export default function QuoteForm() {
           >
             <div className="sm:col-span-2">
               <label className={labelClass} htmlFor="inventoryFile">
-                Upload inventory file <span className="text-red-700">*</span>
+                Upload inventory file{" "}
+                <span className="text-red-700">*</span>
               </label>
+
               <input
                 className={inputClass}
                 id="inventoryFile"
@@ -312,23 +391,28 @@ export default function QuoteForm() {
                 accept={ACCEPTED_FILE_EXTENSIONS.join(",")}
                 required
               />
+
               <p className="mt-2 text-sm leading-6 text-slate-600">
                 Accepted file types: {ACCEPTED_FILE_EXTENSIONS.join(", ")}.
-                Maximum upload size in this starter route: 10MB.
+                Maximum upload size: {MAX_UPLOAD_SIZE_MB}MB.
               </p>
+
               <ErrorMessage message={errors.inventoryFile} />
             </div>
 
             <div className="sm:col-span-2">
               <label className={labelClass} htmlFor="message">
-                Message <span className="font-normal text-slate-500">optional</span>
+                Message{" "}
+                <span className="font-normal text-slate-500">optional</span>
               </label>
+
               <textarea
                 className={`${inputClass} min-h-32`}
                 id="message"
                 name="message"
                 placeholder="Add anything that may help us review the inventory, such as urgency, removal status, product notes, or whether you want to start with part of the stock first."
               />
+
               <ErrorMessage message={errors.message} />
             </div>
           </FormSection>
@@ -344,7 +428,10 @@ export default function QuoteForm() {
           <p className="text-center text-xs leading-5 text-slate-500">
             By submitting, you are asking us to review the inventory list manually.
             This does not guarantee an offer. See our{" "}
-            <Link href="/privacy-policy" className="font-semibold text-slate-700 underline">
+            <Link
+              href="/privacy-policy"
+              className="font-semibold text-slate-700 underline"
+            >
               Privacy Policy
             </Link>
             .

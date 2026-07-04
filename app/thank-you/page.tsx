@@ -15,7 +15,7 @@ export default function ThankYouPage() {
             Submission received
           </p>
           <h1 className="text-3xl font-bold tracking-tight text-slate-950 sm:text-4xl">
-            Thank you — your inventory list has been received.
+            Thank you, your inventory list has been received!
           </h1>
           <p className="mt-5 text-lg leading-8 text-slate-700">
             We’ll review it and contact you if we need more information or can provide a quote.

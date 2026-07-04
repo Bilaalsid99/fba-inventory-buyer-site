@@ -2,10 +2,10 @@ import Image from "next/image";
 import Link from "next/link";
 
 const navItems = [
-  { label: "How It Works", href: "#how-it-works" },
-  { label: "What We Review", href: "#what-we-review" },
-  { label: "FAQ", href: "#faq" },
-  { label: "Get a Quote", href: "#quote" }
+  { label: "How It Works", href: "/#how-it-works" },
+  { label: "What We Review", href: "/#what-we-review" },
+  { label: "FAQ", href: "/#faq" },
+  { label: "Contact", href: "/contact" },
 ];
 
 export default function Header() {
@@ -21,22 +21,22 @@ export default function Header() {
 
         <nav className="hidden items-center gap-7 md:flex" aria-label="Main navigation">
           {navItems.map((item) => (
-            <a
+            <Link
               key={item.href}
               href={item.href}
               className="focus-ring rounded-md text-sm font-medium text-slate-700 transition hover:text-slate-950"
             >
               {item.label}
-            </a>
+            </Link>
           ))}
         </nav>
 
-        <a
-          href="#quote"
+        <Link
+          href="/#quote"
           className="focus-ring rounded-full bg-blue-700 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition hover:bg-blue-800"
         >
           Get a Free Quote
-        </a>
+        </Link>
       </div>
     </header>
   );

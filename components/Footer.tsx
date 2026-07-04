@@ -26,7 +26,7 @@ export default function Footer() {
 
         <div className="text-sm text-slate-300">
           <p className="font-semibold text-white">Contact</p>
-          <p className="mt-3">Email: contact@example.com</p>
+          <p className="mt-3">Email: owner@siddiqholdings.co.uk</p>
           <p>WhatsApp: WhatsApp placeholder</p>
           <p>WeChat: WeChat placeholder</p>
         </div>

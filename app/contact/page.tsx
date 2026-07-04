@@ -41,7 +41,7 @@ export default function ContactPage() {
         <div className="container-page grid gap-6 md:grid-cols-3">
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
             <h2 className="font-bold text-slate-950">Email</h2>
-            <p className="mt-3 text-slate-700">contact@example.com</p>
+            <p className="mt-3 text-slate-700">owner@siddiqholdings.co.uk</p>
           </div>
 
           <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">

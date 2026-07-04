@@ -15,7 +15,7 @@ export default function Header() {
         <Link href="/" className="focus-ring flex items-center gap-3 rounded-lg" aria-label="Homepage">
           <Image src="/logo.svg" width={40} height={40} alt="Business logo placeholder" priority />
           <span className="text-sm font-bold leading-tight text-slate-950 sm:text-base">
-            Business Name Placeholder
+            FBA Stock Rescue UK
           </span>
         </Link>
 

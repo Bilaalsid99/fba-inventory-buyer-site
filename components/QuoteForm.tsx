@@ -12,6 +12,17 @@ const inputClass =
 
 const labelClass = "text-sm font-semibold text-slate-900";
 
+const inventoryStatusOptions = [
+  "Unfulfillable",
+  "Scheduled for removal",
+  "Expired / expiry issue",
+  "Customer return",
+  "Warehouse damaged",
+  "Damaged packaging",
+  "Overstock / slow-moving",
+  "Other / unsure",
+];
+
 type QuoteApiResponse = {
   success: boolean;
   id?: string;
@@ -133,14 +144,15 @@ export default function QuoteForm() {
           </h2>
 
           <p className="mt-5 text-lg leading-8 text-slate-700">
-            Upload your Amazon FBA UK inventory list and we’ll review it manually.
+            Upload your Amazon FBA unfulfillable, removal, return, damaged,
+            expired, or overstock inventory list and we’ll review it manually.
             There is no obligation to accept any offer.
           </p>
 
           <div className="mt-7 space-y-4">
             <div className="rounded-2xl border border-blue-100 bg-blue-50 p-5 text-sm leading-6 text-blue-950">
-              We review every inventory list individually. Upload your list even if you
-              are unsure whether the stock is suitable.
+              Upload your list even if you are unsure why Amazon marked the
+              stock unfulfillable or whether it still has resale value.
             </div>
 
             <div className="rounded-2xl border border-slate-200 bg-white p-5 text-sm leading-6 text-slate-700">
@@ -299,7 +311,7 @@ export default function QuoteForm() {
 
           <FormSection
             title="Inventory details"
-            description="Give us enough detail to understand the lot before we review the uploaded file."
+            description="Give us enough detail to understand why the stock was marked unfulfillable, removed, returned, expired, damaged, or difficult to sell through Amazon."
           >
             <div>
               <label className={labelClass} htmlFor="approximateUnits">
@@ -357,6 +369,33 @@ export default function QuoteForm() {
             </div>
 
             <div className="sm:col-span-2">
+              <label className={labelClass} htmlFor="inventoryStatus">
+                Amazon inventory status / reason{" "}
+                <span className="text-red-700">*</span>
+              </label>
+
+              <select
+                className={inputClass}
+                id="inventoryStatus"
+                name="inventoryStatus"
+                required
+                defaultValue=""
+              >
+                <option value="" disabled>
+                  Select the closest reason
+                </option>
+
+                {inventoryStatusOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
+
+              <ErrorMessage message={errors.inventoryStatus} />
+            </div>
+
+            <div className="sm:col-span-2">
               <label className={labelClass} htmlFor="inventoryConditionNotes">
                 Inventory condition notes{" "}
                 <span className="font-normal text-slate-500">optional</span>
@@ -366,7 +405,7 @@ export default function QuoteForm() {
                 className={`${inputClass} min-h-28`}
                 id="inventoryConditionNotes"
                 name="inventoryConditionNotes"
-                placeholder="Example: customer returns, open-box, damaged packaging, new boxed, mixed-condition, removal inventory, unfulfillable stock"
+                placeholder="Example: Amazon says expired, removal scheduled, customer returns, warehouse damaged, open-box, damaged packaging, new boxed, or mixed-condition stock."
               />
 
               <ErrorMessage message={errors.inventoryConditionNotes} />
@@ -410,7 +449,7 @@ export default function QuoteForm() {
                 className={`${inputClass} min-h-32`}
                 id="message"
                 name="message"
-                placeholder="Add anything that may help us review the inventory, such as urgency, removal status, product notes, or whether you want to start with part of the stock first."
+                placeholder="Add anything that may help us review the inventory, such as urgency, removal status, expiry dates, product notes, or whether you want to start with part of the stock first."
               />
 
               <ErrorMessage message={errors.message} />
@@ -426,8 +465,8 @@ export default function QuoteForm() {
           </button>
 
           <p className="text-center text-xs leading-5 text-slate-500">
-            By submitting, you are asking us to review the inventory list manually.
-            This does not guarantee an offer. See our{" "}
+            By submitting, you are asking us to review the inventory list
+            manually. This does not guarantee an offer. See our{" "}
             <Link
               href="/privacy-policy"
               className="font-semibold text-slate-700 underline"

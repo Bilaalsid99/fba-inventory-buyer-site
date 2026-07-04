@@ -5,7 +5,7 @@ export default function Footer() {
     <footer className="border-t border-slate-200 bg-slate-950 py-10 text-white">
       <div className="container-page grid gap-8 md:grid-cols-3">
         <div>
-          <p className="text-lg font-bold">Business Name Placeholder</p>
+          <p className="text-lg font-bold">FBA Stock Rescue UK</p>
           <p className="mt-3 text-sm leading-6 text-slate-300">
             Independent inventory buyer reviewing selected Amazon FBA UK removal inventory,
             unfulfillable inventory, customer returns, and overstock lists.
@@ -27,8 +27,6 @@ export default function Footer() {
         <div className="text-sm text-slate-300">
           <p className="font-semibold text-white">Contact</p>
           <p className="mt-3">Email: owner@siddiqholdings.co.uk</p>
-          <p>WhatsApp: WhatsApp placeholder</p>
-          <p>WeChat: WeChat placeholder</p>
         </div>
       </div>
 

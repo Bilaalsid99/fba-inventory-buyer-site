@@ -16,8 +16,8 @@ const steps = [
     copy: "Where appropriate, we can begin with part of the inventory so both sides can confirm the process before discussing the remaining stock."
   },
   {
-    title: "Complete the removal",
-    copy: "If agreed, the seller arranges the Amazon removal or return order to the agreed UK delivery address."
+    title: "Arrange the removal or delivery",
+    copy: "If agreed, you create the Amazon removal or return order to the agreed UK delivery address. We confirm the details before anything is arranged."
   }
 ];
 

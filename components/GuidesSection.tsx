@@ -23,7 +23,10 @@ const guides = [
 
 export default function GuidesSection() {
   return (
-    <section className="border-t border-slate-200 bg-slate-50">
+    <section
+      id="guides"
+      className="scroll-mt-24 border-t border-slate-200 bg-slate-50"
+    >
       <div className="mx-auto max-w-6xl px-6 py-16">
         <h2 className="text-3xl font-bold text-slate-900">
           Amazon FBA inventory guides

@@ -5,24 +5,34 @@ const siteUrl =
   "https://fba-inventory-buyer-site.vercel.app";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const lastModified = new Date();
-
   return [
     {
       url: `${siteUrl}/`,
-      lastModified,
       changeFrequency: "monthly",
       priority: 1,
     },
     {
-      url: `${siteUrl}/contact`,
-      lastModified,
+      url: `${siteUrl}/sell-amazon-fba-inventory-uk`,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
+      url: `${siteUrl}/remove-amazon-fba-inventory-uk`,
+      changeFrequency: "monthly",
+      priority: 0.9,
+    },
+    {
+      url: `${siteUrl}/amazon-fba-removal-costs-uk`,
       changeFrequency: "monthly",
       priority: 0.8,
     },
     {
+      url: `${siteUrl}/contact`,
+      changeFrequency: "monthly",
+      priority: 0.6,
+    },
+    {
       url: `${siteUrl}/privacy-policy`,
-      lastModified,
       changeFrequency: "yearly",
       priority: 0.3,
     },

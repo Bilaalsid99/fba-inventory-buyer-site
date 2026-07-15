@@ -7,6 +7,7 @@ import WhatWeReview from "@/components/WhatWeReview";
 import NotSuitableSection from "@/components/NotSuitableSection";
 import BestFitSection from "@/components/BestFitSection";
 import QuoteForm from "@/components/QuoteForm";
+import GuidesSection from "@/components/GuidesSection";
 import FAQ from "@/components/FAQ";
 import Footer from "@/components/Footer";
 
@@ -22,8 +23,8 @@ export const metadata: Metadata = {
     "Amazon removal inventory buyer UK",
     "sell Amazon FBA inventory UK",
     "Amazon FBA customer returns",
-    "Amazon FBA overstock"
-  ]
+    "Amazon FBA overstock",
+  ],
 };
 
 export default function Home() {
@@ -37,6 +38,7 @@ export default function Home() {
       <NotSuitableSection />
       <BestFitSection />
       <QuoteForm />
+      <GuidesSection />
       <FAQ />
       <Footer />
     </main>
